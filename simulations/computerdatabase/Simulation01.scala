@@ -1,4 +1,4 @@
-package computerdatabase 
+package computerdatabase
 import com.excilys.ebi.gatling.core.Predef._
 import com.excilys.ebi.gatling.http.Predef._
 import com.excilys.ebi.gatling.jdbc.Predef._
@@ -6,7 +6,7 @@ import com.excilys.ebi.gatling.http.Headers.Names._
 import akka.util.duration._
 import bootstrap._
 
-class Simulation00 extends Simulation {
+class Simulation01 extends Simulation {
 
 	def apply = {
 
@@ -19,35 +19,28 @@ class Simulation00 extends Simulation {
 			.userAgentHeader("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.92 Safari/537.4")
 			.hostHeader("localhost:9000")
 
-
 		val headers_1 = Map(
-			"Cache-Control" -> """max-age=0"""
-		)
+			"Cache-Control" -> """max-age=0""")
 
 		val headers_3 = Map(
 			"Cache-Control" -> """max-age=0""",
 			"Content-Type" -> """application/x-www-form-urlencoded""",
-			"Origin" -> """http://localhost:9000"""
-		)
-
+			"Origin" -> """http://localhost:9000""")
 
 		val scn = scenario("Scenario Name")
 			.exec(http("request_1")
-					.get("/computers")
-					.headers(headers_1)
-			)
+				.get("/computers")
+				.headers(headers_1))
 			.exec(http("request_2")
-					.get("/computers/new")
-			)
-			.			pause(2)
+				.get("/computers/new"))
+			.pause(2)
 			.exec(http("request_3")
-					.post("/computers")
-					.headers(headers_3)
-						.param("""name""", """My awesome computer""")
-						.param("""introduced""", """2012-10-08""")
-						.param("""discontinued""", """2013-01-03""")
-						.param("""company""", """37""")
-			)
+				.post("/computers")
+				.headers(headers_3)
+				.param("""name""", """My awesome computer""")
+				.param("""introduced""", """2012-10-08""")
+				.param("""discontinued""", """2013-01-03""")
+				.param("""company""", """37"""))
 
 		List(scn.configure.users(1).protocolConfig(httpConf))
 	}

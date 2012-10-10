@@ -3,7 +3,7 @@ package computerdatabase
 import com.excilys.ebi.gatling.core.Predef._
 import com.excilys.ebi.gatling.http.Predef._
 
-class Simulation01 extends Simulation {
+class Simulation02 extends Simulation {
 
 	def apply = {
 
@@ -11,18 +11,14 @@ class Simulation01 extends Simulation {
 			.baseURL("http://localhost:9000")
 
 		val formHeader = Map(
-			"Content-Type" -> "application/x-www-form-urlencoded"
-		)
-
+			"Content-Type" -> "application/x-www-form-urlencoded")
 
 		val scn = scenario("Gatling simulation")
 			.exec(http("Index page")
-				.get("/computers")
-			)
+				.get("/computers"))
 
 			.exec(http("Add computer page")
-				.get("/computers/new")
-			)
+				.get("/computers/new"))
 
 			.exec(http("Post new computer")
 				.post("/computers")
@@ -30,8 +26,7 @@ class Simulation01 extends Simulation {
 				.param("name", "My computer")
 				.param("introduced", "2012-10-08")
 				.param("discontinued", "2013-01-03")
-				.param("company", "37")
-			)
+				.param("company", "37"))
 
 		List(scn.configure.users(1).protocolConfig(httpConf))
 	}

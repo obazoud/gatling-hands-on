@@ -5,7 +5,7 @@ import com.excilys.ebi.gatling.core.Predef._
 import com.excilys.ebi.gatling.http.Predef._
 import bootstrap._
 
-class Simulation08 extends Simulation {
+class Simulation09 extends Simulation {
 
 	def apply = {
 
@@ -17,37 +17,30 @@ class Simulation08 extends Simulation {
 			.baseURL(baseURL)
 
 		val formHeader = Map(
-			"Content-Type" -> "application/x-www-form-urlencoded"
-		)
-
+			"Content-Type" -> "application/x-www-form-urlencoded")
 
 		val scn = scenario("Gatling simulation")
 			.exec(http("Index page")
 				.get("/computers")
 				.check(
 					css(".computers tbody a").count.is(10),
-					responseTimeInMillis.lessThan(Random.nextInt(50))
-				)
-			)
+					responseTimeInMillis.lessThan(Random.nextInt(50))))
 
 			.exitBlockOnFail {
 				repeat(10) {
 					exec(http("Add computer page")
-						.get("/computers/new")
-					)
-					.feed(computerFeeder)
-					.exec(http("Post new computer")
-						.post("/computers")
-						.headers(formHeader)
-						.param("name", "${name}")
-						.param("introduced", "${introduced}")
-						.param("discontinued", "${discontinued}")
-						.param("company", "${company}")
-						.check(
-							status.in(Seq(200, 303)),
-							currentLocation.is(baseURL + "/computers")
-						)
-					)
+						.get("/computers/new"))
+						.feed(computerFeeder)
+						.exec(http("Post new computer")
+							.post("/computers")
+							.headers(formHeader)
+							.param("name", "${name}")
+							.param("introduced", "${introduced}")
+							.param("discontinued", "${discontinued}")
+							.param("company", "${company}")
+							.check(
+								status.in(Seq(200, 303)),
+								currentLocation.is(baseURL + "/computers")))
 				}
 			}
 
@@ -56,16 +49,12 @@ class Simulation08 extends Simulation {
 				.queryParam("f", "My awesome computer")
 				.check(
 					status.is(200),
-					regex("""<a href="([^"]+)">My awesome computer</a>""").find.saveAs("computerURL")
-				)
-			)
+					regex("""<a href="([^"]+)">My awesome computer</a>""").find.saveAs("computerURL")))
 
 			.exec(http("My computer page")
 				.get("${computerURL}")
 				.check(
-					css("#name", "value").is("My awesome computer")
-				)
-			)
+					css("#name", "value").is("My awesome computer")))
 
 		List(scn.configure.users(1).protocolConfig(httpConf))
 	}
