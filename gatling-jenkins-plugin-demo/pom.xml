@@ -12,6 +12,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<gatling.version>1.3.3-SNAPSHOT</gatling.version>
 	</properties>
 
 	<repositories>
@@ -46,10 +48,6 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-	<properties>
-		<gatling.version>1.3.3-SNAPSHOT</gatling.version>
-	</properties>
-	
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
