@@ -5,7 +5,7 @@ import com.excilys.ebi.gatling.core.Predef._
 import com.excilys.ebi.gatling.http.Predef._
 import bootstrap._
 
-class Simulation09 extends Simulation {
+class Simulation08 extends Simulation {
 
 	def apply = {
 
@@ -66,26 +66,6 @@ class Simulation09 extends Simulation {
 					css("#name", "value").is("My awesome computer")
 				)
 			)
-
-			.exec(http("Index page")
-				.get("/computers")
-				.check(
-					css("#pagination .next a", "href").saveAs("nextURL"),
-					currentLocation.saveAs("currentURL")
-				)
-			)
-
-			.asLongAs((s: Session) => {
-				!s.getTypedAttribute[String]("currentURL").endsWith("p=5")
-			}) {
-				exec(http("Next page")
-					.get("${nextURL}")
-					.check(
-						css("#pagination .next a", "href").saveAs("nextURL"),
-						currentLocation.saveAs("currentURL")
-					)
-				)
-			}
 
 		List(scn.configure.users(1).protocolConfig(httpConf))
 	}

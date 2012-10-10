@@ -1,12 +1,11 @@
 package computerdatabase
 
 import scala.util.Random
-import akka.util.duration._
 import com.excilys.ebi.gatling.core.Predef._
 import com.excilys.ebi.gatling.http.Predef._
 import bootstrap._
 
-class Simulation12 extends Simulation {
+class Simulation11 extends Simulation {
 
 	def apply = {
 
@@ -39,8 +38,6 @@ class Simulation12 extends Simulation {
 				)
 			)
 
-			.pause(2 seconds)
-
 			.exitBlockOnFail {
 				repeat(10) {
 					exec(http("Add computer page")
@@ -61,8 +58,6 @@ class Simulation12 extends Simulation {
 					)
 				}
 			}
-
-			.pause(100 milliseconds, 4 seconds)
 
 			.exec(http("Find my computer")
 				.get("/computers")
@@ -88,8 +83,6 @@ class Simulation12 extends Simulation {
 				)
 			)
 
-			.pauseExp(1 second)
-
 			.randomSwitch(
 				80 -> asLongAs((s: Session) => {
 					!s.getTypedAttribute[String]("currentURL").endsWith("p=5")
@@ -110,7 +103,6 @@ class Simulation12 extends Simulation {
 					.get("/computers")
 					.queryParam("p", "20")
 				)
-				.pause(1 second)
 			)
 
 			.tryMax(50) {

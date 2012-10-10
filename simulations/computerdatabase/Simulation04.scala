@@ -4,9 +4,7 @@ import com.excilys.ebi.gatling.core.Predef._
 import com.excilys.ebi.gatling.http.Predef._
 import bootstrap._
 
-class Simulation04 extends Simulation {
-
-	val computerFeeder = csv("computers.csv")
+class Simulation03 extends Simulation {
 
 	def apply = {
 
@@ -22,7 +20,6 @@ class Simulation04 extends Simulation {
 			.exec(http("Index page")
 				.get("/computers")
 			)
-			.feed(computerFeeder)
 
 			.repeat(10) {
 				exec(http("Add computer page")
@@ -32,10 +29,10 @@ class Simulation04 extends Simulation {
 				.exec(http("Post new computer")
 					.post("/computers")
 					.headers(formHeader)
-					.param("name", "${name}")
-					.param("introduced", "${introduced}")
-					.param("discontinued", "${discontinued}")
-					.param("company", "${company}")
+					.param("name", "My computer")
+					.param("introduced", "2012-10-08")
+					.param("discontinued", "2013-01-03")
+					.param("company", "37")
 				)
 			}
 

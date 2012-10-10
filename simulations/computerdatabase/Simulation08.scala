@@ -5,7 +5,7 @@ import com.excilys.ebi.gatling.core.Predef._
 import com.excilys.ebi.gatling.http.Predef._
 import bootstrap._
 
-class Simulation08 extends Simulation {
+class Simulation07 extends Simulation {
 
 	def apply = {
 
@@ -30,7 +30,7 @@ class Simulation08 extends Simulation {
 				)
 			)
 
-			.exitBlockOnFail {
+			.exitBlockOnFail(
 				repeat(10) {
 					exec(http("Add computer page")
 						.get("/computers/new")
@@ -49,21 +49,14 @@ class Simulation08 extends Simulation {
 						)
 					)
 				}
-			}
+			)
 
 			.exec(http("Find my computer")
 				.get("/computers")
 				.queryParam("f", "My awesome computer")
 				.check(
 					status.is(200),
-					regex("""<a href="([^"]+)">My awesome computer</a>""").find.saveAs("computerURL")
-				)
-			)
-
-			.exec(http("My computer page")
-				.get("${computerURL}")
-				.check(
-					css("#name", "value").is("My awesome computer")
+					regex("""<a href="([^"]+)">My awesome computer</a>""").exists
 				)
 			)
 

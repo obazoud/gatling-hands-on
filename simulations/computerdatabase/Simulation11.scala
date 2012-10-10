@@ -5,7 +5,7 @@ import com.excilys.ebi.gatling.core.Predef._
 import com.excilys.ebi.gatling.http.Predef._
 import bootstrap._
 
-class Simulation11 extends Simulation {
+class Simulation10 extends Simulation {
 
 	def apply = {
 
@@ -104,18 +104,6 @@ class Simulation11 extends Simulation {
 					.queryParam("p", "20")
 				)
 			)
-
-			.tryMax(50) {
-				exec((s: Session) => {
-					val id = Random.nextInt(10000)
-					println("Trying id = " + id)
-					s.setAttribute("computerId", id)
-				})
-
-				.exec(http("Random page")
-					.get("/computers/${computerId}")
-				)
-			}
 
 		List(scn.configure.users(1).protocolConfig(httpConf))
 	}

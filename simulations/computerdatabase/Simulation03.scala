@@ -1,10 +1,11 @@
 package computerdatabase
 
+import akka.util.duration._
 import com.excilys.ebi.gatling.core.Predef._
 import com.excilys.ebi.gatling.http.Predef._
 import bootstrap._
 
-class Simulation03 extends Simulation {
+class Simulation02 extends Simulation {
 
 	def apply = {
 
@@ -21,7 +22,7 @@ class Simulation03 extends Simulation {
 				.get("/computers")
 			)
 
-			.repeat(10) {
+			.during(10 seconds) {
 				exec(http("Add computer page")
 					.get("/computers/new")
 				)

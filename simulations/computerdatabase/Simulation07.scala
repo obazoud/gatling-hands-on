@@ -1,20 +1,17 @@
 package computerdatabase
 
-import scala.util.Random
 import com.excilys.ebi.gatling.core.Predef._
 import com.excilys.ebi.gatling.http.Predef._
 import bootstrap._
 
-class Simulation07 extends Simulation {
+class Simulation06 extends Simulation {
+
+	val computerFeeder = csv("computers.csv").random
 
 	def apply = {
 
-		val baseURL = "http://localhost:9000"
-
-		val computerFeeder = csv("computers.csv").random
-
 		val httpConf = httpConfig
-			.baseURL(baseURL)
+			.baseURL("http://localhost:9000")
 
 		val formHeader = Map(
 			"Content-Type" -> "application/x-www-form-urlencoded"
@@ -24,10 +21,6 @@ class Simulation07 extends Simulation {
 		val scn = scenario("Gatling simulation")
 			.exec(http("Index page")
 				.get("/computers")
-				.check(
-					css(".computers tbody a").count.is(10),
-					responseTimeInMillis.lessThan(Random.nextInt(50))
-				)
 			)
 
 			.exitBlockOnFail(
@@ -43,21 +36,8 @@ class Simulation07 extends Simulation {
 						.param("introduced", "${introduced}")
 						.param("discontinued", "${discontinued}")
 						.param("company", "${company}")
-						.check(
-							status.in(Seq(200, 303)),
-							currentLocation.is(baseURL + "/computers")
-						)
 					)
 				}
-			)
-
-			.exec(http("Find my computer")
-				.get("/computers")
-				.queryParam("f", "My awesome computer")
-				.check(
-					status.is(200),
-					regex("""<a href="([^"]+)">My awesome computer</a>""").exists
-				)
 			)
 
 		List(scn.configure.users(1).protocolConfig(httpConf))

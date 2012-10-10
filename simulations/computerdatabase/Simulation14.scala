@@ -1,11 +1,12 @@
 package computerdatabase
 
 import scala.util.Random
+import akka.util.duration._
 import com.excilys.ebi.gatling.core.Predef._
 import com.excilys.ebi.gatling.http.Predef._
 import bootstrap._
 
-class Simulation09 extends Simulation {
+class Simulation13 extends Simulation {
 
 	def apply = {
 
@@ -20,6 +21,14 @@ class Simulation09 extends Simulation {
 			"Content-Type" -> "application/x-www-form-urlencoded"
 		)
 
+		val nextPageChain = exec(http("Next page")
+				.get("${nextURL}")
+				.check(
+					css("#pagination .next a", "href").saveAs("nextURL"),
+					currentLocation.saveAs("currentURL")
+				)
+			)
+
 
 		val scn = scenario("Gatling simulation")
 			.exec(http("Index page")
@@ -29,6 +38,8 @@ class Simulation09 extends Simulation {
 					responseTimeInMillis.lessThan(Random.nextInt(50))
 				)
 			)
+
+			.pause(2 seconds)
 
 			.exitBlockOnFail {
 				repeat(10) {
@@ -50,6 +61,8 @@ class Simulation09 extends Simulation {
 					)
 				}
 			}
+
+			.pause(100 milliseconds, 4 seconds)
 
 			.exec(http("Find my computer")
 				.get("/computers")
@@ -75,18 +88,42 @@ class Simulation09 extends Simulation {
 				)
 			)
 
-			.asLongAs((s: Session) => {
-				!s.getTypedAttribute[String]("currentURL").endsWith("p=5")
-			}) {
-				exec(http("Next page")
-					.get("${nextURL}")
-					.check(
-						css("#pagination .next a", "href").saveAs("nextURL"),
-						currentLocation.saveAs("currentURL")
-					)
+			.pauseExp(1 second)
+
+			.randomSwitch(
+				80 -> asLongAs((s: Session) => {
+					!s.getTypedAttribute[String]("currentURL").endsWith("p=5")
+				}) (nextPageChain),
+
+				20 -> asLongAs((s: Session) => {
+					!s.getTypedAttribute[String]("currentURL").endsWith("p=50")
+				}) (nextPageChain)
+			)
+
+			.roundRobinSwitch(
+				exec(http("Go to page 10")
+					.get("/computers")
+					.queryParam("p", "10")
+				),
+
+				exec(http("Go to page 20")
+					.get("/computers")
+					.queryParam("p", "20")
+				)
+			)
+
+			.tryMax(50) {
+				exec((s: Session) => {
+					val id = Random.nextInt(10000)
+					println("Trying id = " + id)
+					s.setAttribute("computerId", id)
+				})
+
+				.exec(http("Random page")
+					.get("/computers/${computerId}")
 				)
 			}
 
-		List(scn.configure.users(1).protocolConfig(httpConf))
+		List(scn.configure.users(100).ramp(20).protocolConfig(httpConf))
 	}
 }

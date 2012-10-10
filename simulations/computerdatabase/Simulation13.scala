@@ -6,7 +6,7 @@ import com.excilys.ebi.gatling.core.Predef._
 import com.excilys.ebi.gatling.http.Predef._
 import bootstrap._
 
-class Simulation13 extends Simulation {
+class Simulation12 extends Simulation {
 
 	def apply = {
 
@@ -110,6 +110,7 @@ class Simulation13 extends Simulation {
 					.get("/computers")
 					.queryParam("p", "20")
 				)
+				.pause(1 second)
 			)
 
 			.tryMax(50) {
@@ -124,6 +125,6 @@ class Simulation13 extends Simulation {
 				)
 			}
 
-		List(scn.configure.users(100).ramp(20).protocolConfig(httpConf))
+		List(scn.configure.users(1).protocolConfig(httpConf))
 	}
 }
