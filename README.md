@@ -9,8 +9,8 @@ Simulations
 
 The simulations use the computer database scala sample provided with Play 2 distribution.
 
-1.	Gatling Recorder output for adding a new computer.
-2.	Little clean up and properly name request.
+1.	Gatling Recorder output for adding a new computer. Filtering out `**/*.css`, `**/*.js` and `**/*.ico`
+2.	Little clean up and properly name requests.
 3.	Add during loop : a user repeatly add new computers for 10 seconds.
 4.	Replace during loop with repeat : a user add 10 identical new computers.
 5.	Use a CSV feeder to provide data like the name or the company when adding a new computer.
