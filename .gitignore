@@ -14,3 +14,7 @@ project/plugins/project/
 
 # misc
 .DS_Store
+
+# idea specific
+.idea
+*.iml

@@ -2,11 +2,10 @@ package computerdatabase
 
 import com.excilys.ebi.gatling.core.Predef._
 import com.excilys.ebi.gatling.http.Predef._
+import akka.util.duration._
 import bootstrap._
 
 class Simulation07 extends Simulation {
-
-	val computerFeeder = csv("computers.csv").random
 
 	def apply = {
 
@@ -20,26 +19,90 @@ class Simulation07 extends Simulation {
 			.userAgentHeader("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.92 Safari/537.4")
 			.hostHeader("localhost:9000")
 
-		val formHeaders = Map("Content-Type" -> """application/x-www-form-urlencoded""")
+		val formHeaders = Map(
+			"Content-Type" -> "application/x-www-form-urlencoded")
+
+		val computerFeeder = csv("computers.csv") // Create a CSV feeder from file computers.csv
+			.circular // Circular strategy : loop on the entries contained in the file
 
 		val scn = scenario("Gatling simulation")
 			.exec(http("Index page")
-				.get("/computers"))
+				.get("/")
+			)
+			.pause(11 milliseconds)
+			.feed(computerFeeder) // Add into the session one entry of the CSV
+			.repeat(10) { // Each user will add 10 identical computers because the feed is outside the repeat
+				exec(http("Add computer page")
+					.get("/computers/new")
+				)
+				.pause(2)
+				.exec(http("Post new computer")
+					.post("/computers")
+					.headers(formHeaders)
+					.param("name", "${name}") // Use EL to access to the data that are stored in the session
+					.param("introduced", "${introduced}")
+					.param("discontinued", "${discontinued}")
+					.param("company", "${company}")
+				)
+			}
+			.pause(2 seconds)
+			.exec(http("Find my computer")
+				.get("/computers")
+				.queryParam("f", "My awesome computer")
+			)
+			.pause(1 second, 3 seconds)
+			.exec(http("My computer page")
+				.get("/computers/1000")
+			)
+			.pauseExp(200 milliseconds)
+			.exec(http("Index page")
+				.get("/")
+			)
+			.pause(11 milliseconds)
+			.exec(http("Next page 1")
+				.get("/computers")
+				.queryParam("p", "1")
+			)
+			.pause(1)
+			.exec(http("Next page 2")
+				.get("/computers")
+				.queryParam("p", "2")
+			)
+			.pause(568 milliseconds)
+			.exec(http("Next page 3")
+				.get("/computers")
+				.queryParam("p", "3")
+			)
+			.pause(480 milliseconds)
+			.exec(http("Next page 4")
+				.get("/computers")
+				.queryParam("p", "4")
+			)
+			.pause(503 milliseconds)
+			.exec(http("Next page 5")
+				.get("/computers")
+				.queryParam("p", "5")
+			)
+			.pause(712 milliseconds)
+			.exec(http("Go to page 10")
+				.get("/computers")
+				.queryParam("p", "10")
+			)
+			.pause(2)
+			.exec(http("Go to page 20")
+				.get("/computers")
+				.queryParam("p", "20")
+			)
+			.pause(3)
+			.exec(http("Random page")
+				.get("/computers/157")
+			)
+			.pause(1)
+			.exec(http("Index page")
+				.get("/")
+			)
+			.pause(3)
 
-			.exitBlockOnFail(
-				repeat(10) {
-					exec(http("Add computer page")
-						.get("/computers/new"))
-						.feed(computerFeeder)
-						.exec(http("Post new computer")
-							.post("/computers")
-							.headers(formHeaders)
-							.param("name", "${name}")
-							.param("introduced", "${introduced}")
-							.param("discontinued", "${discontinued}")
-							.param("company", "${company}"))
-				})
-
-		List(scn.configure.users(1).protocolConfig(httpConf))
+		List(scn.configure.users(100).ramp(20).protocolConfig(httpConf))
 	}
 }
