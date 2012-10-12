@@ -5,7 +5,7 @@ import com.excilys.ebi.gatling.core.util.PathHelper.path2string
 object Engine extends App {
 
 	val props = new GatlingPropertiesBuilder
-	props.reportsOnly("gatling")
+//	props.reportsOnly("gatling")
 	props.dataDirectory(IDEPathHelper.dataDirectory)
 	props.resultsDirectory(IDEPathHelper.resultsDirectory)
 	props.requestBodiesDirectory(IDEPathHelper.requestBodiesDirectory)
