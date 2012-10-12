@@ -6,7 +6,7 @@ import akka.util.duration._
 import scala.util.Random
 import bootstrap._
 
-class Simulation09 extends Simulation {
+class Simulation10 extends Simulation {
 
 	def apply = {
 
@@ -30,94 +30,76 @@ class Simulation09 extends Simulation {
 		val scn = scenario("Gatling simulation")
 			.exec(http("Index page")
 				.get("/")
-				.check( // Add checks
-					css(".computers tbody a").count.is(10), // Check that there are 10 links in the table
-					responseTimeInMillis.lessThan(Random.nextInt(50)) // Check that the response time is less than a random value between 0 and 50ms
-				)
-			)
+				.check(
+					css(".computers tbody a").count.is(10),
+					responseTimeInMillis.lessThan(Random.nextInt(50))))
 			.pause(11 milliseconds)
 			.repeat(10) {
 				exec(http("Add computer page")
-					.get("/computers/new")
-				)
-				.pause(2)
-				.feed(computerFeeder)
-				.exec(http("Post new computer")
-					.post("/computers")
-					.headers(formHeaders)
-					.param("name", "${name}")
-					.param("introduced", "${introduced}")
-					.param("discontinued", "${discontinued}")
-					.param("company", "${company}")
-					.check( // Add checks
-						status.in(Seq(200, 303)), // Check that HTTP status code is 200 or 303
-						currentLocation.is(baseURL + "/computers") // Check that the current URL is /computers
-					)
-				)
+					.get("/computers/new"))
+					.pause(2)
+					.feed(computerFeeder)
+					.exec(http("Post new computer")
+						.post("/computers")
+						.headers(formHeaders)
+						.param("name", "${name}")
+						.param("introduced", "${introduced}")
+						.param("discontinued", "${discontinued}")
+						.param("company", "${company}")
+						.check(
+							status.in(Seq(200, 303)),
+							currentLocation.is(baseURL + "/computers")))
 			}
 			.pause(2 seconds)
 			.exec(http("Find my computer")
 				.get("/computers")
 				.queryParam("f", "My awesome computer")
-				.check( // Add checks
-					status.is(200), // Check that HTTP status code is 200
-					regex("""<a href="([^"]+)">My awesome computer</a>""").exists // Check that there is a link to My awesome computer in the page
-				)
-			)
+				.check(
+					status.is(200),
+					regex("""<a href="([^"]+)">My awesome computer</a>""").find.saveAs("computerURL") // Store into the session the result of the regex
+					))
 			.pause(1 second, 3 seconds)
 			.exec(http("My computer page")
-				.get("/computers/1000")
-				.check( // Add checks
-					css("#name", "value").is("My awesome computer") // Check that the value attribute of #name is My awesome computer
-				)
-			)
+				.get("${computerURL}") // Use EL to access to session attribute
+				.check(
+					css("#name", "value").is("My awesome computer")))
 			.pauseExp(200 milliseconds)
 			.exec(http("Index page")
-				.get("/")
-			)
+				.get("/"))
 			.pause(11 milliseconds)
 			.exec(http("Next page 1")
 				.get("/computers")
-				.queryParam("p", "1")
-			)
+				.queryParam("p", "1"))
 			.pause(1)
 			.exec(http("Next page 2")
 				.get("/computers")
-				.queryParam("p", "2")
-			)
+				.queryParam("p", "2"))
 			.pause(568 milliseconds)
 			.exec(http("Next page 3")
 				.get("/computers")
-				.queryParam("p", "3")
-			)
+				.queryParam("p", "3"))
 			.pause(480 milliseconds)
 			.exec(http("Next page 4")
 				.get("/computers")
-				.queryParam("p", "4")
-			)
+				.queryParam("p", "4"))
 			.pause(503 milliseconds)
 			.exec(http("Next page 5")
 				.get("/computers")
-				.queryParam("p", "5")
-			)
+				.queryParam("p", "5"))
 			.pause(712 milliseconds)
 			.exec(http("Go to page 10")
 				.get("/computers")
-				.queryParam("p", "10")
-			)
+				.queryParam("p", "10"))
 			.pause(2)
 			.exec(http("Go to page 20")
 				.get("/computers")
-				.queryParam("p", "20")
-			)
+				.queryParam("p", "20"))
 			.pause(3)
 			.exec(http("Random page")
-				.get("/computers/157")
-			)
+				.get("/computers/157"))
 			.pause(1)
 			.exec(http("Index page")
-				.get("/")
-			)
+				.get("/"))
 			.pause(3)
 
 		List(scn.configure.users(100).ramp(20).protocolConfig(httpConf))

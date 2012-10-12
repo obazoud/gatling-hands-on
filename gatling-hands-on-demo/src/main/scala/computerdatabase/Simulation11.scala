@@ -32,28 +32,23 @@ class Simulation11 extends Simulation {
 				.get("/")
 				.check(
 					css(".computers tbody a").count.is(10),
-					responseTimeInMillis.lessThan(Random.nextInt(50))
-				)
-			)
+					responseTimeInMillis.lessThan(Random.nextInt(50))))
 			.pause(11 milliseconds)
 			.repeat(10) {
 				exec(http("Add computer page")
-					.get("/computers/new")
-				)
-				.pause(2)
-				.feed(computerFeeder)
-				.exec(http("Post new computer")
-					.post("/computers")
-					.headers(formHeaders)
-					.param("name", "${name}")
-					.param("introduced", "${introduced}")
-					.param("discontinued", "${discontinued}")
-					.param("company", "${company}")
-					.check(
-						status.in(Seq(200, 303)),
-						currentLocation.is(baseURL + "/computers")
-					)
-				)
+					.get("/computers/new"))
+					.pause(2)
+					.feed(computerFeeder)
+					.exec(http("Post new computer")
+						.post("/computers")
+						.headers(formHeaders)
+						.param("name", "${name}")
+						.param("introduced", "${introduced}")
+						.param("discontinued", "${discontinued}")
+						.param("company", "${company}")
+						.check(
+							status.in(Seq(200, 303)),
+							currentLocation.is(baseURL + "/computers")))
 			}
 			.pause(2 seconds)
 			.exec(http("Find my computer")
@@ -61,38 +56,31 @@ class Simulation11 extends Simulation {
 				.queryParam("f", "My awesome computer")
 				.check(
 					status.is(200),
-					regex("""<a href="([^"]+)">My awesome computer</a>""").find.saveAs("computerURL")
-				)
-			)
+					regex("""<a href="([^"]+)">My awesome computer</a>""").find.saveAs("computerURL")))
 			.pause(1 second, 3 seconds)
 			.exec(http("My computer page")
 				.get("${computerURL}")
 				.check(
-					css("#name", "value").is("My awesome computer")
-				)
-			)
+					css("#name", "value").is("My awesome computer")))
 			.pauseExp(200 milliseconds)
 			.exec(http("Index page")
 				.get("/")
 				.check(
 					css("#pagination .next a", "href").saveAs("nextURL"), // Save the URL to the next page
 					currentLocation.saveAs("currentURL") // Save the current URL
-				)
-			)
+					))
 			.pause(11 milliseconds)
 			.asLongAs( // As long as this function will return true ...
 				(s: Session) => {
 					!s.getTypedAttribute[String]("currentURL").endsWith("p=5")
+				}) { // ... this block will be executed
+					exec(http("Next page")
+						.get("${nextURL}")
+						.check(
+							css("#pagination .next a", "href").saveAs("nextURL"), // Save the URL to the next page
+							currentLocation.saveAs("currentURL") // Save the current URL
+							))
 				}
-			) { // ... this block will be executed
-				exec(http("Next page")
-					.get("${nextURL}")
-					.check(
-						css("#pagination .next a", "href").saveAs("nextURL"), // Save the URL to the next page
-						currentLocation.saveAs("currentURL") // Save the current URL
-					)
-				)
-			}
 			// The following requests are now useless
 			/*.pause(1)
 			.exec(http("Next page 2")
@@ -117,21 +105,17 @@ class Simulation11 extends Simulation {
 			.pause(712 milliseconds)
 			.exec(http("Go to page 10")
 				.get("/computers")
-				.queryParam("p", "10")
-			)
+				.queryParam("p", "10"))
 			.pause(2)
 			.exec(http("Go to page 20")
 				.get("/computers")
-				.queryParam("p", "20")
-			)
+				.queryParam("p", "20"))
 			.pause(3)
 			.exec(http("Random page")
-				.get("/computers/157")
-			)
+				.get("/computers/157"))
 			.pause(1)
 			.exec(http("Index page")
-				.get("/")
-			)
+				.get("/"))
 			.pause(3)
 
 		List(scn.configure.users(100).ramp(20).protocolConfig(httpConf))
