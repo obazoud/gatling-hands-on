@@ -84,7 +84,7 @@ class Step13 extends Simulation {
 				exec(browse, search)
 			}
 		val admins = scenario("Admins")
-			.during(120) { // loop for 60 seconds
+			.during(60) { // loop for 60 seconds
 				exec(browse, create)
 			}
 
