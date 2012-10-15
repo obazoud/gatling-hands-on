@@ -9,7 +9,7 @@ Simulations
 
 The simulations use the computer database scala sample provided with Play 2 distribution.
 
-Start with `play -DapplyEvolutions.default=true run`.
+Start with `play` then `start -DapplyEvolutions.default=true`.
 
 Set up Gatling Recorder with the following options:
 
