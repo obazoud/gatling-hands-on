@@ -26,7 +26,7 @@
 		<encoding>UTF-8</encoding>
 
 		<gatling.version>1.3.3</gatling.version>
-		<gatling-highcharts.version>1.3.3-SNAPSHOT</gatling-highcharts.version>
+		<gatling-highcharts.version>1.3.3</gatling-highcharts.version>
 
 		<scala-maven-plugin.version>3.1.0</scala-maven-plugin.version>
 	</properties>
