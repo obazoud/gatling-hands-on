@@ -24,15 +24,15 @@ class Step02 extends Simulation {
 			.pause(4)
 			.exec(http("Search")
 				.get("/computers")
-				.queryParam("f", "Macbook Pro")
+				.queryParam("f", "MacBook Pro")
 				// add checks
 				.check(status.is(200),
-					regex("""<a href="([^"]+)">Macbook Pro</a>""").find.saveAs("computerURL")))
+					regex("""<a href="([^"]+)">MacBook Pro</a>""").find.saveAs("computerURL")))
 			.pause(4)
 			// add EL
 			.exec(http("Select")
 				.get("${computerURL}")
-				.check(css("#name", "value").is("Macbook Pro"))) // add check
+				.check(css("#name", "value").is("MacBook Pro"))) // add check
 
 		List(scn.configure.users(1).protocolConfig(httpConf))
 	}
