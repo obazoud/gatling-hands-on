@@ -39,7 +39,7 @@ class Step11 extends Simulation {
 				.param("introduced", "${introduced}")
 				.param("discontinued", "${discontinued}")
 				.param("company", "${company}")
-				.check(status.is((session: Session) => 200 + random.nextInt(2)))) // make check fail randomly
+				.check(status.is(session => 200 + random.nextInt(2)))) // make check fail randomly
 
 		List(scn.configure.users(1).protocolConfig(httpConf))
 	}

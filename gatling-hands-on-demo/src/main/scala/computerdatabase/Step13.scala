@@ -74,7 +74,7 @@ class Step13 extends Simulation {
 						.param("introduced", "${introduced}")
 						.param("discontinued", "${discontinued}")
 						.param("company", "${company}")
-						.check(status.is((session: Session) => 200 + random.nextInt(2))))
+						.check(status.is(session => 200 + random.nextInt(2))))
 				}
 		}
 
