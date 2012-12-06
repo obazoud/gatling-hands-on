@@ -7,22 +7,11 @@ import bootstrap._
 
 class Step13 extends Simulation {
 
-	// plug steps 3, 7 and 12 altogether
-	def apply = {
+	object Search {
 
-		val httpConf = httpConfig
-			.baseURL("http://localhost:9000")
-			.acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-			.doNotTrackHeader("1")
-			.acceptLanguageHeader("en-US,en;q=0.5")
-			.acceptEncodingHeader("gzip, deflate")
-			.userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:16.0) Gecko/20100101 Firefox/16.0")
-			.hostHeader("localhost:9000")
+		val searchFeeder = csv("search.csv").circular
 
-		// define chains for each process
-		val search = {
-			val searchFeeder = csv("search.csv").circular
-
+		val search =
 			exec(http("Index")
 				.get("/"))
 				.pause(4)
@@ -37,28 +26,33 @@ class Step13 extends Simulation {
 				.exec(http("Select")
 					.get("${computerURL}")
 					.check(css("#name", "value").is("${searchComputerName}")))
-		}
+	}
 
-		val browse = {
-			def gotoPage(index: String) = exec(http("Next page")
+	object Browse {
+
+		def gotoPage(index: String) =
+			exec(http("Next page")
 				.get("/computers")
 				.queryParam("p", index))
 
+		val browse =
 			randomSwitch(
 				80 -> repeat(5, "index") {
 					gotoPage("${index}")
 						.pause(4)
 				},
 				20 -> gotoPage("5"))
-		}
+	}
 
-		val create = {
-			val formHeaders = Map("Content-Type" -> "application/x-www-form-urlencoded")
+	object Create {
 
-			val createFeeder = csv("computers.csv").circular
+		val formHeaders = Map("Content-Type" -> "application/x-www-form-urlencoded")
 
-			val random = new java.util.Random
+		val createFeeder = csv("computers.csv").circular
 
+		val random = new java.util.Random
+
+		val create =
 			exec(http("Index")
 				.get("/"))
 				.pause(4)
@@ -76,16 +70,28 @@ class Step13 extends Simulation {
 						.param("company", "${company}")
 						.check(status.is(session => 200 + random.nextInt(2))))
 				}
-		}
+	}
+
+	// plug steps 3, 7 and 12 altogether
+	def apply = {
+
+		val httpConf = httpConfig
+			.baseURL("http://localhost:9000")
+			.acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+			.doNotTrackHeader("1")
+			.acceptLanguageHeader("en-US,en;q=0.5")
+			.acceptEncodingHeader("gzip, deflate")
+			.userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:16.0) Gecko/20100101 Firefox/16.0")
+			.hostHeader("localhost:9000")
 
 		// define 2 populations
 		val users = scenario("Users")
 			.repeat(3) { // loop 3 times
-				exec(browse, search)
+				exec(Browse.browse, Search.search)
 			}
 		val admins = scenario("Admins")
 			.during(60) { // loop for 60 seconds
-				exec(browse, create)
+				exec(Browse.browse, Create.create)
 			}
 
 		// mix the two populations
