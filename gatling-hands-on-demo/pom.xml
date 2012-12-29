@@ -25,8 +25,7 @@
 		<scala.version>2.9.2</scala.version>
 		<encoding>UTF-8</encoding>
 
-		<gatling.version>1.3.5</gatling.version>
-		<gatling-highcharts.version>1.3.5</gatling-highcharts.version>
+		<gatling.version>1.4.0</gatling.version>
 
 		<scala-maven-plugin.version>3.1.0</scala-maven-plugin.version>
 	</properties>
@@ -46,7 +45,7 @@
 			<dependency>
 				<groupId>com.excilys.ebi.gatling.highcharts</groupId>
 				<artifactId>gatling-charts-highcharts</artifactId>
-				<version>${gatling-highcharts.version}</version>
+				<version>${gatling.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.scala-lang</groupId>
