@@ -22,10 +22,10 @@
 	<properties>
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
-		<scala.version>2.9.2</scala.version>
+		<scala.version>2.9.3-RC1</scala.version>
 		<encoding>UTF-8</encoding>
 
-		<gatling.version>1.4.1</gatling.version>
+		<gatling.version>1.4.2</gatling.version>
 
 		<scala-maven-plugin.version>3.1.0</scala-maven-plugin.version>
 	</properties>

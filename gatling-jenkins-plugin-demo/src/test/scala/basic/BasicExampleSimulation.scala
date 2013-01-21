@@ -36,5 +36,5 @@ class BasicExampleSimulation extends Simulation {
 				.headers(headers_1)
 				.check(status.is(302)))
 
-	run(scn.users(1).protocolConfig(httpConf))
+	setUp(scn.users(1).protocolConfig(httpConf))
 }
