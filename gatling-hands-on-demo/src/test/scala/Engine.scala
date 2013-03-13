@@ -4,7 +4,6 @@ import com.excilys.ebi.gatling.core.config.GatlingPropertiesBuilder
 object Engine extends App {
 
 	val props = new GatlingPropertiesBuilder
-//	props.reportsOnly("gatling")
 	props.dataDirectory(IDEPathHelper.dataDirectory.toString)
 	props.resultsDirectory(IDEPathHelper.resultsDirectory.toString)
 	props.requestBodiesDirectory(IDEPathHelper.requestBodiesDirectory.toString)
